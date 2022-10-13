@@ -58,9 +58,8 @@ func TagsToFields(ctx context.Context) []zapcore.Field {
 func MetadataToFields(ctx context.Context) []zapcore.Field {
 	fields := []zapcore.Field{}
 	md, _ := metadata.FromIncomingContext(ctx)
-	for k, v := range md {
-		fields = append(fields, zap.Any(k, v))
-	}
+	metadataField := zap.Any("grpc.metadata", md)
+	fields = append(fields, metadataField)
 	return fields
 }
 

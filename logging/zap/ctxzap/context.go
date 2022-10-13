@@ -6,6 +6,7 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/tags"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"google.golang.org/grpc/metadata"
 )
 
 type ctxMarker struct{}
@@ -49,6 +50,15 @@ func TagsToFields(ctx context.Context) []zapcore.Field {
 	fields := []zapcore.Field{}
 	tags := grpc_ctxtags.Extract(ctx)
 	for k, v := range tags.Values() {
+		fields = append(fields, zap.Any(k, v))
+	}
+	return fields
+}
+
+func MetadataToFields(ctx context.Context) []zapcore.Field {
+	fields := []zapcore.Field{}
+	md, _ := metadata.FromIncomingContext(ctx)
+	for k, v := range md {
 		fields = append(fields, zap.Any(k, v))
 	}
 	return fields

@@ -49,7 +49,7 @@ func PayloadStreamServerInterceptor(logger *zap.Logger, decider grpc_logging.Ser
 		if !decider(stream.Context(), info.FullMethod, srv) {
 			return handler(srv, stream)
 		}
-		logEntry := logger.With(append(serverCallFields(info.FullMethod), ctxzap.TagsToFields(stream.Context())...)...)
+		logEntry := logger.With(append(serverCallFields(info.FullMethod), append(ctxzap.TagsToFields(stream.Context()), ctxzap.MetadataToFields(stream.Context())...)...)...)
 		newStream := &loggingServerStream{ServerStream: stream, logger: logEntry}
 		return handler(srv, newStream)
 	}
